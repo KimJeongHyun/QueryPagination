@@ -4,6 +4,7 @@ import peerDepsExternal from "rollup-plugin-peer-deps-external";
 import resolve from "@rollup/plugin-node-resolve";
 import image from "@rollup/plugin-image";
 import typescript from "@rollup/plugin-typescript";
+import postcss from "rollup-plugin-postcss";
 
 const packageJson = require("./package.json");
 const extensions = ["js", "jsx", "ts", "tsx", "mjs"];
@@ -37,6 +38,10 @@ export default {
       include: /node_modules/,
     }),
     typescript({ tsconfig: "./tsconfig.json" }),
+    postcss({
+      modules: true,
+      use: ["sass"],
+    }),
     image(),
   ],
   external,
