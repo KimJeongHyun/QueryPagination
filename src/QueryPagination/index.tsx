@@ -97,7 +97,7 @@ const QueryPagination = ({
   );
 
   const handlePageLastClick = useCallback(() => {
-    const isLastPivot = page % (sliceSize - 1) === 0;
+    const isLastPivot = (page + 1) % sliceSize === 0;
 
     const remainPivots = basePivots + sliceSize - 1 - page;
 
@@ -108,7 +108,7 @@ const QueryPagination = ({
       ? page + 1
       : isLastPage
       ? totalPages - 1
-      : remainPivots;
+      : page + remainPivots;
 
     handlePageButtonClick(nextPage);
   }, [page]);
