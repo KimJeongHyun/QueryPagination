@@ -6,13 +6,22 @@ import ChevronLeft from "../assets/chevronLeft.svg";
 import ChevronRight from "../assets/chevronRight.svg";
 import ChevronRightDuo from "../assets/chevronRightDuo.svg";
 
-import { queryPageParsing, queryStringify, makePaginateArray } from "./utils";
+import { queryParse, queryStringify, makePaginateArray } from "./utils";
 
 import { QueryPaginationProps } from "./QueryPagination.types";
 
 import "./QueryPagination.styles.scss";
 
-const QueryPagination: React.FC<QueryPaginationProps> = ({
+/**
+ * @description Pagination Component, controlled by url search params.
+ * @param totalPages Total page numbers per slice size.
+ * @param sliceSize page number slicing number
+ * @param styles.wrapperBgColor Pagination Container bgColor
+ * @param styles.selectedColor selected btn's color. { bgColor, fontColor }
+ * @returns URL Query Pagination
+ * @returns undefined, if totalPages is under 0 or page query is undefined.
+ */
+const QueryPagination = ({
   totalPages = 0,
   sliceSize = 5,
   styles = {
@@ -24,37 +33,44 @@ const QueryPagination: React.FC<QueryPaginationProps> = ({
   },
 }: QueryPaginationProps) => {
   if (totalPages <= 0) {
-    console.warn(
-      "totalPages값이 이상합니다! 이 페이지가 페이지네이션이 필요한 페이지가 맞나요?"
-    );
+    console.warn("Props 'totalPages' must be higher than 0.");
+    return;
+  }
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const queries = queryParse({ location });
+
+  const { page } = queries;
+
+  if (page === undefined) {
+    console.warn("Query 'page' must be included in URL");
     return;
   }
 
   const { wrapperBgColor, selectedColor } = styles;
 
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const queries: { page?: string } = queryPageParsing({ location });
-  const { page } = queries;
+  const basePivots = useMemo(
+    () => Math.floor(page / sliceSize) * sliceSize,
+    [page]
+  );
 
   const { isLeftVectorDisabled, isRightVectorDisabled } = useMemo(
     () => ({
-      isLeftVectorDisabled: totalPages === 0 || Number(page) === 0,
-      isRightVectorDisabled:
-        totalPages === 0 || Number(page) === totalPages - 1,
+      isLeftVectorDisabled: totalPages === 0 || page === 0,
+      isRightVectorDisabled: totalPages === 0 || page === totalPages - 1,
     }),
     [page, totalPages]
   );
 
   const paginateArray = useMemo(
-    () => makePaginateArray({ sliceSize, page: Number(page), totalPages }),
+    () => makePaginateArray({ sliceSize, page, totalPages }),
     [sliceSize, page, totalPages]
   );
 
   const handlePageButtonClick = useCallback(
     (pageIndex: number) => {
-      if (Number(page) !== pageIndex) {
+      if (page !== pageIndex) {
         const entriesQuery = Object.entries<string | number>({
           ...queries,
           page: pageIndex,
@@ -65,42 +81,55 @@ const QueryPagination: React.FC<QueryPaginationProps> = ({
     [page, queries]
   );
 
-  const handlePagePrevClick = useCallback(() => {
-    handlePageButtonClick(Number(page) - 1);
-  }, [page]);
+  const handlePagePrevClick = useCallback(
+    () => handlePageButtonClick(page - 1),
+    [page]
+  );
 
-  const handlePageForwardClick = useCallback(() => {
-    handlePageButtonClick(Number(page) + 1);
-  }, [page]);
+  const handlePageForwardClick = useCallback(
+    () => handlePageButtonClick(page + 1),
+    [page]
+  );
 
-  const handlePageInitClick = useCallback(() => {
-    handlePageButtonClick(0);
-  }, []);
+  const handlePageInitClick = useCallback(
+    () => handlePageButtonClick(basePivots === page ? page - 1 : basePivots),
+    [page]
+  );
 
   const handlePageLastClick = useCallback(() => {
-    const isLast = (Number(page) + 1) % sliceSize === 0;
-    const basePage = Math.floor((Number(page) + 1) / sliceSize) * sliceSize;
-    const remainPage = Number(page) + (sliceSize - 1 - Number(page));
+    const isLastPivot = page % (sliceSize - 1) === 0;
 
-    const nextPage = isLast ? Number(page) + 1 : basePage + remainPage;
+    const remainPivots = basePivots + sliceSize - 1 - page;
+
+    const isLastPage =
+      Math.floor(totalPages / sliceSize) === basePivots / sliceSize;
+
+    const nextPage = isLastPivot
+      ? page + 1
+      : isLastPage
+      ? totalPages - 1
+      : remainPivots;
 
     handlePageButtonClick(nextPage);
   }, [page]);
 
-  const handleButtonStyles = useCallback((idx: number) => {
-    const isSelected = Number(page) % sliceSize === idx;
+  const handleButtonStyles = useCallback(
+    (idx: number) => {
+      const isSelected = page % sliceSize === idx;
 
-    return {
-      backgroundColor: isSelected ? selectedColor.bgColor : "inherit",
-      color: isSelected ? selectedColor.fontColor : "inherit",
-      cursor: isSelected ? "not-allowed" : "pointer",
-    };
-  }, []);
+      return {
+        backgroundColor: isSelected ? selectedColor.bgColor : "inherit",
+        color: isSelected ? selectedColor.fontColor : "inherit",
+        cursor: isSelected ? "not-allowed" : "pointer",
+      };
+    },
+    [page, sliceSize]
+  );
 
   return (
     <div
       className="QueryPagination-ButtonGroups"
-      style={{ backgroundColor: wrapperBgColor, width: (sliceSize + 4) * 32 }}
+      style={{ background: wrapperBgColor, width: (sliceSize + 4) * 32 }}
     >
       <button
         className="QueryPagination-Button"
@@ -120,7 +149,7 @@ const QueryPagination: React.FC<QueryPaginationProps> = ({
         <button
           className="QueryPagination-Button"
           key={idx}
-          onClick={() => handlePageButtonClick(idx)}
+          onClick={() => handlePageButtonClick(basePivots + idx)}
           style={handleButtonStyles(idx)}
         >
           {i}

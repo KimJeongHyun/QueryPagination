@@ -5,7 +5,7 @@ import { withQuery } from "@storybook/addon-queryparams";
 import QueryPagination from "./index";
 
 const meta = {
-  title: "쿼리 페이지네이션",
+  title: "Query Pagination",
   component: QueryPagination,
   decorators: [withRouter, withQuery],
   parameters: {
@@ -17,9 +17,23 @@ const meta = {
 
 type Story = StoryObj<typeof meta>;
 
-export const defaultQueryPagination: Story = {
+export const defaultPagination: Story = {
   args: {
-    totalPages: 0,
+    totalPages: 5,
+    styles: {
+      wrapperBgColor: "#fff",
+      selectedColor: {
+        bgColor: "#0A84FF",
+        fontColor: "#fff",
+      },
+    },
+  },
+};
+
+export const tenSlicePagination: Story = {
+  args: {
+    totalPages: 15,
+    sliceSize: 10,
     styles: {
       wrapperBgColor: "#fff",
       selectedColor: {

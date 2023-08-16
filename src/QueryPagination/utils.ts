@@ -1,6 +1,7 @@
 import { Location } from "react-router-dom";
+import { SearchType } from "./QueryPagination.types";
 
-const queryPageParsing = ({ location }: { location: Location }) => {
+const queryParse = ({ location }: { location: Location }) => {
   const searchSplitQuery = location.search
     ? location.search.split("?")
     : window.location.search.split("?");
@@ -12,16 +13,18 @@ const queryPageParsing = ({ location }: { location: Location }) => {
     return andSplitQueries.reduce((acc, cur) => {
       const equalSplitQuery = cur.split("=");
 
+      const [key, value] = equalSplitQuery;
+
       const newAcc = {
         ...acc,
-        [equalSplitQuery[0]]: equalSplitQuery[1],
+        [key]: key === "page" ? Number(value) : value,
       };
 
       return newAcc;
-    }, {});
+    }, {}) as SearchType<any>;
   }
 
-  return {};
+  return {} as SearchType<any>;
 };
 
 const queryStringify = ({
@@ -48,4 +51,4 @@ const makePaginateArray = ({
   return newArray.slice((pageNumber - 1) * sliceSize, pageNumber * sliceSize);
 };
 
-export { queryPageParsing, queryStringify, makePaginateArray };
+export { queryParse, queryStringify, makePaginateArray };
