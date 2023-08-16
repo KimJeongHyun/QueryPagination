@@ -1,12 +1,6 @@
 import { Location } from "react-router-dom";
 
-import { SearchType } from "./QueryPagination.types";
-
-const queryPageParsing = <T extends { page: string }>({
-  location,
-}: {
-  location: Location;
-}) => {
+const queryPageParsing = ({ location }: { location: Location }) => {
   const searchSplitQuery = location.search
     ? location.search.split("?")
     : window.location.search.split("?");
@@ -24,13 +18,17 @@ const queryPageParsing = <T extends { page: string }>({
       };
 
       return newAcc;
-    }, {} as SearchType<T>);
+    }, {});
   }
 
-  return {} as SearchType<T>;
+  return {};
 };
 
-const queryStringify = ({ entriesQuery }: { entriesQuery: string[][] }) =>
+const queryStringify = ({
+  entriesQuery,
+}: {
+  entriesQuery: (string | number)[][];
+}) =>
   entriesQuery
     .reduce((acc, cur) => [...acc, `${cur[0]}=${cur[1]}`], [])
     .join("&");

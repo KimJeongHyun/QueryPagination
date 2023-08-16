@@ -1,5 +1,10 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+
+import ChevronLeftDuo from "../assets/chevronLeftDuo.svg";
+import ChevronLeft from "../assets/chevronLeft.svg";
+import ChevronRight from "../assets/chevronRight.svg";
+import ChevronRightDuo from "../assets/chevronRightDuo.svg";
 
 import { queryPageParsing, queryStringify, makePaginateArray } from "./utils";
 
@@ -7,38 +12,57 @@ import { QueryPaginationProps } from "./QueryPagination.types";
 
 import "./QueryPagination.styles.scss";
 
-const QueryPagination: React.FC<QueryPaginationProps> = <
-  T extends { page: string }
->({
-  totalPages,
+const QueryPagination: React.FC<QueryPaginationProps> = ({
+  totalPages = 0,
   sliceSize = 5,
-  styles,
+  styles = {
+    wrapperBgColor: "#fff",
+    selectedColor: {
+      bgColor: "#0a84ff",
+      fontColor: "#fff",
+    },
+  },
 }: QueryPaginationProps) => {
-  const { WrapperBgColor, selectedColor } = styles;
+  if (totalPages <= 0) {
+    console.warn(
+      "totalPages값이 이상합니다! 이 페이지가 페이지네이션이 필요한 페이지가 맞나요?"
+    );
+    return;
+  }
+
+  const { wrapperBgColor, selectedColor } = styles;
 
   const navigate = useNavigate();
   const location = useLocation();
 
-  const queries = queryPageParsing<T>({ location });
+  const queries: { page?: string } = queryPageParsing({ location });
   const { page } = queries;
 
-  const paginateArray = makePaginateArray({
-    sliceSize,
-    page: Number(page),
-    totalPages,
-  });
+  const { isLeftVectorDisabled, isRightVectorDisabled } = useMemo(
+    () => ({
+      isLeftVectorDisabled: totalPages === 0 || Number(page) === 0,
+      isRightVectorDisabled:
+        totalPages === 0 || Number(page) === totalPages - 1,
+    }),
+    [page, totalPages]
+  );
+
+  const paginateArray = useMemo(
+    () => makePaginateArray({ sliceSize, page: Number(page), totalPages }),
+    [sliceSize, page, totalPages]
+  );
 
   const handlePageButtonClick = useCallback(
     (pageIndex: number) => {
       if (Number(page) !== pageIndex) {
-        const entriesQuery = Object.entries<string>({
+        const entriesQuery = Object.entries<string | number>({
           ...queries,
           page: pageIndex,
         });
         navigate(`/?${queryStringify({ entriesQuery })}`);
       }
     },
-    [page]
+    [page, queries]
   );
 
   const handlePagePrevClick = useCallback(() => {
@@ -51,20 +75,19 @@ const QueryPagination: React.FC<QueryPaginationProps> = <
 
   const handlePageInitClick = useCallback(() => {
     handlePageButtonClick(0);
-  }, [page]);
+  }, []);
 
   const handlePageLastClick = useCallback(() => {
-    const isLast = ((Number(page) + 1) / sliceSize) % 1 === 0;
+    const isLast = (Number(page) + 1) % sliceSize === 0;
     const basePage = Math.floor((Number(page) + 1) / sliceSize) * sliceSize;
+    const remainPage = Number(page) + (sliceSize - 1 - Number(page));
 
-    const nextPage = isLast
-      ? Number(page) + 1
-      : basePage + Number(page) + (sliceSize - 1 - Number(page));
+    const nextPage = isLast ? Number(page) + 1 : basePage + remainPage;
 
     handlePageButtonClick(nextPage);
   }, [page]);
 
-  const handleButtonStyles = (idx: number) => {
+  const handleButtonStyles = useCallback((idx: number) => {
     const isSelected = Number(page) % sliceSize === idx;
 
     return {
@@ -72,26 +95,26 @@ const QueryPagination: React.FC<QueryPaginationProps> = <
       color: isSelected ? selectedColor.fontColor : "inherit",
       cursor: isSelected ? "not-allowed" : "pointer",
     };
-  };
+  }, []);
 
   return (
     <div
       className="QueryPagination-ButtonGroups"
-      style={{ backgroundColor: WrapperBgColor, width: (sliceSize + 4) * 32 }}
+      style={{ backgroundColor: wrapperBgColor, width: (sliceSize + 4) * 32 }}
     >
       <button
         className="QueryPagination-Button"
         onClick={handlePageInitClick}
-        disabled={Number(page) === 0}
+        disabled={isLeftVectorDisabled}
       >
-        {"<<"}
+        <img src={ChevronLeftDuo} alt="minusVectorDuoIcon" />
       </button>
       <button
         className="QueryPagination-Button"
         onClick={handlePagePrevClick}
-        disabled={Number(page) === 0}
+        disabled={isLeftVectorDisabled}
       >
-        {"<"}
+        <img src={ChevronLeft} alt="minusVectorIcon" />
       </button>
       {paginateArray.map((i, idx) => (
         <button
@@ -106,16 +129,16 @@ const QueryPagination: React.FC<QueryPaginationProps> = <
       <button
         className="QueryPagination-Button"
         onClick={handlePageForwardClick}
-        disabled={Number(page) === totalPages - 1}
+        disabled={isRightVectorDisabled}
       >
-        {">"}
+        <img src={ChevronRight} alt="plusVectorIcon" />
       </button>
       <button
         className="QueryPagination-Button"
         onClick={handlePageLastClick}
-        disabled={Number(page) === totalPages - 1}
+        disabled={isRightVectorDisabled}
       >
-        {">>"}
+        <img src={ChevronRightDuo} alt="plusVectorDuoIcon" />
       </button>
     </div>
   );

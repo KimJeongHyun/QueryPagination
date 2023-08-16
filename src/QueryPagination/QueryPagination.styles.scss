@@ -1,19 +1,26 @@
 .QueryPagination-ButtonGroups {
-  border: 1px solid #dfdfdf;
+  display: flex;
+
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .QueryPagination-Button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
   position: relative;
   width: 32px;
   height: 32px;
+  line-height: 32px;
   background: #fff;
   border: none;
 
   transition: background 0.3s ease;
 
-  &:not(:last-child) {
-    border-right: 1px solid #dfdfdf;
-  }
   cursor: pointer;
 
   &:not(:disabled)::before {
@@ -36,5 +43,13 @@
 
   &:disabled {
     background: #cecece;
+  }
+
+  &:first-child {
+    border-radius: 4px 0px 0px 4px;
+  }
+
+  &:last-child {
+    border-radius: 0px 4px 4px 0px;
   }
 }

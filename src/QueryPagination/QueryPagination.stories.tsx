@@ -19,11 +19,11 @@ type Story = StoryObj<typeof meta>;
 
 export const defaultQueryPagination: Story = {
   args: {
-    totalPages: 10,
+    totalPages: 0,
     styles: {
-      WrapperBgColor: "#fff",
+      wrapperBgColor: "#fff",
       selectedColor: {
-        bgColor: "#43425c",
+        bgColor: "#0A84FF",
         fontColor: "#fff",
       },
     },
