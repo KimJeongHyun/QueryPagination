@@ -4,8 +4,10 @@
   "description": "Pagination Buttons by url query",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
-  "browser": "./dist/index.umd.js",
   "types": "dist/types/index.d.ts",
+  "files":[
+    "/dist"
+  ],
   "scripts": {
     "build": "rm -rf ./dist & tsc --emitDeclarationOnly & rollup -c",
     "storybook": "storybook dev -p 6006",
