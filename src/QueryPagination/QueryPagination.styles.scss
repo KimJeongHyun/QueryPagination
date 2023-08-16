@@ -1,6 +1,6 @@
 .QueryPagination-ButtonGroups {
   display: flex;
-
+  width: max-content;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -16,7 +16,7 @@
   width: 32px;
   height: 32px;
   line-height: 32px;
-  background: #fff;
+  background: inherit;
   border: none;
 
   transition: background 0.5s ease;

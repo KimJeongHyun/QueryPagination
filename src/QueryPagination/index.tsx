@@ -129,7 +129,7 @@ const QueryPagination = ({
   return (
     <div
       className="QueryPagination-ButtonGroups"
-      style={{ background: wrapperBgColor, width: (sliceSize + 4) * 32 }}
+      style={{ background: wrapperBgColor }}
     >
       <button
         className="QueryPagination-Button"

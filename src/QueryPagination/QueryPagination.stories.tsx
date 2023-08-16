@@ -20,13 +20,6 @@ type Story = StoryObj<typeof meta>;
 export const defaultPagination: Story = {
   args: {
     totalPages: 5,
-    styles: {
-      wrapperBgColor: "#fff",
-      selectedColor: {
-        bgColor: "#0A84FF",
-        fontColor: "#fff",
-      },
-    },
   },
 };
 
@@ -35,9 +28,9 @@ export const tenSlicePagination: Story = {
     totalPages: 15,
     sliceSize: 10,
     styles: {
-      wrapperBgColor: "#fff",
+      wrapperBgColor: "#eee",
       selectedColor: {
-        bgColor: "#0A84FF",
+        bgColor: "#5179a4",
         fontColor: "#fff",
       },
     },
