@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, memo } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 import ChevronLeftDuo from "../assets/chevronLeftDuo.svg";
 import ChevronLeft from "../assets/chevronLeft.svg";
@@ -36,10 +36,9 @@ const QueryPagination = ({
     console.warn("Props 'totalPages' must be higher than 0.");
     return;
   }
-  const navigate = useNavigate();
-  const location = useLocation();
+  const history = useHistory();
 
-  const queries = queryParse({ location });
+  const queries = queryParse();
 
   const { page } = queries;
 
@@ -75,7 +74,7 @@ const QueryPagination = ({
           ...queries,
           page: pageIndex,
         });
-        navigate(`/?${queryStringify({ entriesQuery })}`);
+        history.push(`/?${queryStringify({ entriesQuery })}`);
       }
     },
     [page, queries]

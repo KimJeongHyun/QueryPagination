@@ -13,3 +13,7 @@ export interface QueryPaginationProps {
 export type SearchType<T> = {
   [key in T as string]: string;
 } & { page: number };
+
+export type LocationType = {
+  search: string;
+};

@@ -1,10 +1,7 @@
-import { Location } from "react-router-dom";
-import { SearchType } from "./QueryPagination.types";
+import { LocationType, SearchType } from "./QueryPagination.types";
 
-const queryParse = ({ location }: { location: Location }) => {
-  const searchSplitQuery = location.search
-    ? location.search.split("?")
-    : window.location.search.split("?");
+const queryParse = () => {
+  const searchSplitQuery = window.location.search.split("?");
 
   if (searchSplitQuery.length) {
     const andSplitQueries =

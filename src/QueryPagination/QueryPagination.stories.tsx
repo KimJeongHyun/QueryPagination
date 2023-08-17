@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { withRouter } from "storybook-addon-react-router-v6";
 import { withQuery } from "@storybook/addon-queryparams";
 
 import QueryPagination from "./index";
@@ -7,7 +6,7 @@ import QueryPagination from "./index";
 const meta = {
   title: "Query Pagination",
   component: QueryPagination,
-  decorators: [withRouter, withQuery],
+  decorators: [withQuery],
   parameters: {
     query: {
       page: "0",
