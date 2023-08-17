@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useMemo, memo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 import ChevronLeftDuo from "../assets/chevronLeftDuo.svg";
@@ -173,4 +173,4 @@ const QueryPagination = ({
   );
 };
 
-export default QueryPagination;
+export default memo(QueryPagination);

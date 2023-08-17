@@ -5,11 +5,11 @@
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "types": "dist/types/index.d.ts",
-  "files":[
+  "files": [
     "/dist"
   ],
   "scripts": {
-    "build": "rm -rf ./dist & tsc --emitDeclarationOnly & rollup -c",
+    "deploy": "rm -rf ./dist & tsc --emitDeclarationOnly & rollup -c & yarn publish",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
