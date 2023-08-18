@@ -8,20 +8,23 @@ React v18 + rollup + Typescript + Storybook
 
 ## Peer Dependencies
 
-* react v18.2.0
-* react-dom v18.2.0
-
+- react
+- react-dom
+- react-router-dom v5
+- sass
 
 ### Use-Cases
 
-* Default
+- Default
 
 ```
 import { QueryPagination } from 'query-pagination';
+import { useHistory } from 'react-router-dom'
 
 function App(){
+
     return (
-        <QueryPagination totalPages={5} />
+        <QueryPagination totalPages={5} history={history}/>
     )
 }
 
@@ -31,12 +34,15 @@ https://github.com/KimJeongHyun/QueryPagination/assets/23470125/36b19830-e3c2-49
 
 ---
 
-* Custom Use-Case 
+- Custom Use-Case
 
 ```
 import { QueryPagination } from 'query-pagination';
+import { useHistory } from 'react-router-dom'
 
 function App(){
+    const history = useHistory();
+
     return (
         <QueryPagination
           totalPages={15}
@@ -47,6 +53,9 @@ function App(){
               bgColor: "#5179a4",
               fontColor: "#fff",
             }}
+          }
+          history={history}
+
         />
     )
 }
@@ -55,4 +64,3 @@ function App(){
 https://github.com/KimJeongHyun/QueryPagination/assets/23470125/559f76d0-f245-4a90-a301-c1c7b08b41a6
 
 ---
-
