@@ -1,7 +1,9 @@
 import { LocationType, SearchType } from "./QueryPagination.types";
 
-const queryParse = () => {
-  const searchSplitQuery = window.location.search.split("?");
+const queryParse = ({ location }: { location: LocationType }) => {
+  const searchSplitQuery = location.search
+    ? location.search.split("?")
+    : window.location.search.split("?");
 
   if (searchSplitQuery.length) {
     const andSplitQueries =
@@ -14,11 +16,16 @@ const queryParse = () => {
 
       const newAcc = {
         ...acc,
-        [key]: key === "page" ? Number(value) : value,
+        [key]:
+          key === "page"
+            ? Number(value)
+            : Object.keys(acc).includes(key)
+            ? [acc[key], value].join(",")
+            : value,
       };
 
       return newAcc;
-    }, {}) as SearchType<any>;
+    }, {} as SearchType<any>);
   }
 
   return {} as SearchType<any>;
@@ -30,7 +37,21 @@ const queryStringify = ({
   entriesQuery: (string | number)[][];
 }) =>
   entriesQuery
-    .reduce((acc, cur) => [...acc, `${cur[0]}=${cur[1]}`], [])
+    .reduce((acc, cur) => {
+      const [key, value] = [cur[0], cur[1]];
+
+      const newAcc = [...acc];
+
+      if (typeof value === "string") {
+        const valueCommaSplit = value.split(",");
+
+        valueCommaSplit.forEach((i) => newAcc.push(`${key}=${i}`));
+      } else {
+        newAcc.push(`${key}=${value}`);
+      }
+
+      return newAcc;
+    }, [])
     .join("&");
 
 const makePaginateArray = ({

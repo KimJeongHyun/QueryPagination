@@ -1,5 +1,6 @@
 export interface QueryPaginationProps {
-  totalPages: number;
+  history: any;
+  totalPages?: number;
   sliceSize?: number;
   styles?: {
     wrapperBgColor: string;
@@ -11,7 +12,7 @@ export interface QueryPaginationProps {
 }
 
 export type SearchType<T> = {
-  [key in T as string]: string;
+  [key in T as string]: string | number;
 } & { page: number };
 
 export type LocationType = {

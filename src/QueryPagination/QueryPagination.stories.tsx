@@ -1,11 +1,27 @@
+import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { withQuery } from "@storybook/addon-queryparams";
 
 import QueryPagination from "./index";
+import { MemoryRouter, Route, withRouter } from "react-router-dom";
+
+const Default = (storyProps) => {
+  return (
+    <MemoryRouter>
+      <Route
+        component={(componentProps) => (
+          <WithRouterQP {...componentProps} {...storyProps} />
+        )}
+      />
+    </MemoryRouter>
+  );
+};
+
+const WithRouterQP = withRouter(QueryPagination);
 
 const meta = {
   title: "Query Pagination",
-  component: QueryPagination,
+  component: Default,
   decorators: [withQuery],
   parameters: {
     query: {

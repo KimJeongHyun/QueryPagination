@@ -1,5 +1,4 @@
-import React, { useCallback, useMemo, memo } from "react";
-import { useHistory } from "react-router-dom";
+import React, { useCallback, useMemo } from "react";
 
 import ChevronLeftDuo from "../assets/chevronLeftDuo.svg";
 import ChevronLeft from "../assets/chevronLeft.svg";
@@ -31,14 +30,14 @@ const QueryPagination = ({
       fontColor: "#fff",
     },
   },
+  history,
 }: QueryPaginationProps) => {
   if (totalPages <= 0) {
     console.warn("Props 'totalPages' must be higher than 0.");
     return;
   }
-  const history = useHistory();
 
-  const queries = queryParse();
+  const queries = queryParse({ location: history.location });
 
   const { page } = queries;
 
@@ -74,7 +73,7 @@ const QueryPagination = ({
           ...queries,
           page: pageIndex,
         });
-        history.push(`/?${queryStringify({ entriesQuery })}`);
+        history.push(`?${queryStringify({ entriesQuery })}`);
       }
     },
     [page, queries]
@@ -172,4 +171,4 @@ const QueryPagination = ({
   );
 };
 
-export default memo(QueryPagination);
+export default QueryPagination;
